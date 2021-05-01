@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 
 import '../config.dart';
 
@@ -23,8 +24,18 @@ class DatabaseMethods {
 
   //create chat document
   createChatRoom(chatMap) async {
-    DocumentReference temp = await FirebaseFirestore.instance.collection('chats').add(chatMap);
-    return temp.id;
+    print(chatMap['users']);
+    Function eq = const ListEquality().equals;
+    QuerySnapshot snap = await FirebaseFirestore.instance.collection('chats').where('users', arrayContainsAny: chatMap['users']).get();
+
+    for (var item in snap.docs) {
+      if (eq(item.data()["users"], chatMap['users'])) {
+        return;
+      } else {
+        DocumentReference temp = await FirebaseFirestore.instance.collection('chats').add(chatMap);
+        return temp.id;
+      }
+    }
   }
 
   //send messages from chat

@@ -1,9 +1,11 @@
-import 'package:chat_app/config.dart';
 import 'package:chat_app/services/database.dart';
-import 'package:chat_app/widgets/app_bar.dart';
+import 'package:chat_app/views/Chat.dart';
 import 'package:chat_app/widgets/custom_search_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../config.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -11,7 +13,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String search;
+  TextEditingController _controller = TextEditingController();
 
   DatabaseMethods databaseMethods = DatabaseMethods();
 
@@ -25,7 +27,7 @@ class _SearchScreenState extends State<SearchScreen> {
               return SearchTile(
                 id: snapshot.docs[index].id,
                 email: snapshot.docs[index].data()['email'],
-                name: "${snapshot.docs[index].data()['name']}",
+                name: snapshot.docs[index].data()['name'],
               );
             },
           )
@@ -34,7 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   //Init search resaults
   initSearch() async {
-    var tempSnap = await databaseMethods.getDoctorsByEmail(search);
+    var tempSnap = await databaseMethods.getDoctorsByEmail(_controller.text.trim());
     // print("DATA: ${tempSnap.docs[0].data()}");
     setState(() {
       snapshot = tempSnap;
@@ -43,43 +45,61 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBarMain(context),
-      body: Container(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: CustomSearchInput(
-                    onChanged: (value) {
-                      setState(() {
-                        search = value;
-                      });
-                    },
-                    hintText: "Search For Doctor...",
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(color: Color(0xffE8E8E9).withAlpha(50), borderRadius: BorderRadius.circular(45)),
-                  child: IconButton(
-                    onPressed: () async {
-                      initSearch();
-                    },
-                    icon: Icon(
-                      Icons.search,
-                      size: 35,
-                      color: Colors.white,
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          child: Column(
+            children: [
+              Container(
+                alignment: Alignment.bottomCenter,
+                margin: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Color(0xffdfe6e9),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromRGBO(55, 84, 170, 0.15),
+                      offset: Offset(7, 7),
+                      blurRadius: 15,
                     ),
-                  ),
-                )
-              ],
-            ),
-            Expanded(
-              child: searchList(),
-            )
-          ],
+                    BoxShadow(
+                      color: Color.fromRGBO(55, 84, 170, 0.15),
+                      offset: Offset(-7, -7),
+                      blurRadius: 20,
+                    )
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomSearchInput(
+                        controller: _controller,
+                        onChanged: (value) {},
+                        hintText: "Search For Doctor...",
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(right: 10),
+                      child: IconButton(
+                        onPressed: () {
+                          initSearch();
+                        },
+                        icon: FaIcon(
+                          FontAwesomeIcons.search,
+                          size: 35,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: searchList(),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -96,29 +116,46 @@ class SearchTile extends StatelessWidget {
 
   DatabaseMethods databaseMethods = DatabaseMethods();
 
-  // Create chat room
-  createChatroom(BuildContext context, String userId) async {
-    // QuerySnapshot temp = await databaseMethods.getChatRoomsId(userInfo.email);
+  createChatroom(BuildContext context, String userEmail) async {
     List<String> users = [
-      userId,
-      currentUser.uid
+      userEmail,
+      currentUser.email
     ];
     Map<String, dynamic> chatRoomMap = {
       "users": users,
     };
 
-    var id = databaseMethods.createChatRoom(chatRoomMap);
-    print(id);
-    // Navigator.of(context).push(MaterialPageRoute(
-    //     builder: (_) => ConversationScreen(
-    //           chatId: chatId,
-    //         )));
+    var id = await databaseMethods.createChatRoom(chatRoomMap);
+    
+    if (id == null) {
+      Navigator.of(context).pop();
+    }else{
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(id)));
+    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Color(0xffdfe6e9),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromRGBO(55, 84, 170, 0.15),
+            offset: Offset(7, 7),
+            blurRadius: 15,
+          ),
+          BoxShadow(
+            color: Color.fromRGBO(55, 84, 170, 0.15),
+            offset: Offset(-7, -7),
+            blurRadius: 20,
+          )
+        ],
+      ),
       child: Row(
         children: [
           Column(
@@ -126,21 +163,36 @@ class SearchTile extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: TextStyle(color: Colors.white, fontSize: 17),
+                style: TextStyle(color: Colors.black, fontSize: 17),
               ),
               Text(
                 email,
-                style: TextStyle(color: Colors.white, fontSize: 17),
+                style: TextStyle(color: Colors.black, fontSize: 17),
               ),
             ],
           ),
           Spacer(),
           Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(55, 84, 170, 0.15),
+                  offset: Offset(7, 7),
+                  blurRadius: 15,
+                ),
+                BoxShadow(
+                  color: Color.fromRGBO(55, 84, 170, 0.15),
+                  offset: Offset(-7, -7),
+                  blurRadius: 20,
+                )
+              ],
+            ),
             child: ElevatedButton(
               onPressed: () {
-                createChatroom(context, id);
+                createChatroom(context, email);
               },
               style: ButtonStyle(
+                elevation: MaterialStateProperty.all<double>(0),
                 shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
                 padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(16)),
@@ -154,13 +206,5 @@ class SearchTile extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-getChatRoomId(String a, String b) {
-  if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-    return "$b\_$a";
-  } else {
-    return "$a\_$b";
   }
 }

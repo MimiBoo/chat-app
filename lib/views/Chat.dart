@@ -3,6 +3,7 @@ import 'package:chat_app/widgets/custom_search_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:chat_app/widgets/custom_search_input.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../config.dart';
 
@@ -104,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         onPressed: () {
                           sendMessage();
                         },
-                        icon: Icon(
+                        icon: FaIcon(
                           Icons.send,
                           size: 35,
                           color: Colors.black,

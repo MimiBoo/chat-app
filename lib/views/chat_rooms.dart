@@ -2,8 +2,8 @@ import 'package:chat_app/model/user.dart';
 import 'package:chat_app/services/auth.dart';
 import 'package:chat_app/services/database.dart';
 import 'package:chat_app/views/conversation.dart';
-import 'package:chat_app/views/search.dart';
-import 'package:chat_app/views/signin.dart';
+import 'package:chat_app/views/searh.dart';
+import 'package:chat_app/views/Signin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -84,7 +84,7 @@ class _ChatRoomsState extends State<ChatRooms> {
       body: chatRoomList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => SearchScreen()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => SearchScree()));
         },
         child: Icon(Icons.search),
       ),

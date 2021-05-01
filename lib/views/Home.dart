@@ -2,9 +2,11 @@ import 'package:chat_app/config.dart';
 import 'package:chat_app/model/user.dart';
 import 'package:chat_app/services/database.dart';
 import 'package:chat_app/views/Chat.dart';
-import 'package:chat_app/views/signin.dart';
+import 'package:chat_app/views/Search.dart';
+import 'package:chat_app/views/Signin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -68,6 +70,32 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: chatRoomList(),
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => SearchScreen()));
+        },
+        child: Container(
+          height: 70,
+          width: 70,
+          decoration: BoxDecoration(
+            color: Color(0xffdfe6e9),
+            borderRadius: BorderRadius.circular(45),
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(55, 84, 170, 0.15),
+                offset: Offset(7, 7),
+                blurRadius: 15,
+              ),
+              BoxShadow(
+                color: Color.fromRGBO(55, 84, 170, 0.15),
+                offset: Offset(-7, -7),
+                blurRadius: 20,
+              )
+            ],
+          ),
+          child: Center(child: FaIcon(FontAwesomeIcons.search)),
+        ),
+      ),
     );
   }
 }
@@ -105,44 +133,46 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(widget.uid)));
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        margin: EdgeInsets.symmetric(vertical: 5),
-        decoration: BoxDecoration(
-          color: Color(0xffdfe6e9),
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Color.fromRGBO(55, 84, 170, 0.15),
-              offset: Offset(7, 7),
-              blurRadius: 15,
-            ),
-            BoxShadow(
-              color: Color.fromRGBO(55, 84, 170, 0.15),
-              offset: Offset(-7, -7),
-              blurRadius: 20,
-            )
-          ],
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(
-                tempUser.photoURL,
+    return tempUser != null
+        ? GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(widget.uid)));
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              margin: EdgeInsets.symmetric(vertical: 5),
+              decoration: BoxDecoration(
+                color: Color(0xffdfe6e9),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(55, 84, 170, 0.15),
+                    offset: Offset(7, 7),
+                    blurRadius: 15,
+                  ),
+                  BoxShadow(
+                    color: Color.fromRGBO(55, 84, 170, 0.15),
+                    offset: Offset(-7, -7),
+                    blurRadius: 20,
+                  )
+                ],
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      tempUser.photoURL,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    tempUser.name,
+                    style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
-            SizedBox(width: 10),
-            Text(
-              tempUser.name,
-              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    );
+          )
+        : Container();
   }
 }
