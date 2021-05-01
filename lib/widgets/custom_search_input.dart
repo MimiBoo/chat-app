@@ -25,7 +25,7 @@ class CustomSearchInput extends StatelessWidget {
         controller: controller,
         textAlign: TextAlign.left,
         keyboardType: keyboardType,
-        style: TextStyle(fontSize: 20, color: Colors.white),
+        style: TextStyle(fontSize: 20, color: Colors.black),
         decoration: InputDecoration(
           icon: iconData != null
               ? Icon(

@@ -1,6 +1,5 @@
 import 'package:chat_app/config.dart';
 import 'package:chat_app/services/database.dart';
-import 'package:chat_app/views/conversation.dart';
 import 'package:chat_app/widgets/app_bar.dart';
 import 'package:chat_app/widgets/custom_search_input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

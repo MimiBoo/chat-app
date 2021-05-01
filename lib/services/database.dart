@@ -33,11 +33,15 @@ class DatabaseMethods {
   }
 
   getMessages(String chatId) {
-    return FirebaseFirestore.instance.collection('chats').doc(chatId).collection("messages").orderBy('timestemp').snapshots();
+    return FirebaseFirestore.instance.collection('chats').doc(chatId).collection("messages").orderBy('timestamp').snapshots();
   }
 
-  getChatRooms(String email) async {
-    return await FirebaseFirestore.instance.collection('chats').where('users', arrayContains: email).snapshots();
+  getMessage(String chatId) async {
+    return await FirebaseFirestore.instance.collection('chats').doc(chatId).collection("messages").orderBy('timestemp').get();
+  }
+
+  getChatRooms(String email) {
+    return FirebaseFirestore.instance.collection('chats').where('users', arrayContains: email).snapshots();
   }
 
   getChatRoomsId(String email) async {

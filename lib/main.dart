@@ -1,5 +1,5 @@
 import 'package:chat_app/config.dart';
-import 'package:chat_app/views/chat_rooms.dart';
+import 'package:chat_app/views/Home.dart';
 import 'package:chat_app/views/signin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,12 +25,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Chat App',
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xff1f1f1f),
-        primaryColor: Color(0xff145c9e),
+        scaffoldBackgroundColor: Color(0xffdfe6e9),
+        primaryColor: Color(0xffdfe6e9),
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: currentUser == null ? SignIn() : ChatRooms(),
+      home: currentUser == null ? SignIn() : HomePage(),
     );
   }
 }
