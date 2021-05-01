@@ -42,7 +42,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
     if (_controller.text != null) {
       Map<String, dynamic> messageMap = {
         'message': _controller.text,
-        "by": currentUser.uid,
+        "user": currentUser.uid,
+        'photoUrl': "https://lh3.googleusercontent.com/a-/AOh14GggsIjQZWniYMtWdmvwBPNOZ4BFysHaq_MnTft5=s96-c",
         'timestemp': FieldValue.serverTimestamp(),
       };
       databaseMethods.sendMessages(widget.chatId, messageMap);

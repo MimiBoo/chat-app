@@ -28,7 +28,7 @@ class _ChatRoomsState extends State<ChatRooms> {
             ? ListView.builder(
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
-                  return ChatRoomTile(snapshot.data.docs[index].data()['chatroomId']);
+                  return ChatRoomTile(snapshot.data.docs[index].id);
                 },
               )
             : Container();
@@ -44,10 +44,9 @@ class _ChatRoomsState extends State<ChatRooms> {
   }
 
   getChatRooms() async {
-    var snap = await databaseMethods.getChatRooms(currentUser.uid);
+    var snap = await databaseMethods.getChatRooms(currentUser.email);
 
     if (snap != null) {
-      print("SNAP: $snap");
       setState(() {
         chatRoomsStream = snap;
       });
@@ -106,16 +105,15 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
   Users tempUser;
 
   getDoctorInfo() async {
-    var splitedList = widget.uid.split("_");
-    splitedList.removeWhere((item) => item == currentUser.uid);
+    var docEmail = await DatabaseMethods().getChatUser(widget.uid);
+    var docData = await DatabaseMethods().getDoctorsByEmail(docEmail);
 
-    DocumentSnapshot snap = await DatabaseMethods().getDoctorByUid(splitedList.first);
-
-    if (snap.data() != null) {
+    if (docData.docs[0].data() != null) {
       setState(() {
         tempUser = Users(
-          email: snap.data()["email"],
-          name: "${snap.data()["first_name"]} ${snap.data()["last_name"]}",
+          email: docData.docs[0].data()["email"],
+          name: "${docData.docs[0].data()["name"]}",
+          photoURL: docData.docs[0].data()['photoUrl'],
         );
       });
     }
@@ -129,7 +127,7 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
 
   @override
   Widget build(BuildContext context) {
-    return tempUser.name != null
+    return tempUser != null
         ? GestureDetector(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (_) => ConversationScreen(chatId: widget.uid)));
@@ -141,8 +139,8 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
               child: Row(
                 children: [
                   CircleAvatar(
-                    child: Text(
-                      tempUser.name.substring(0, 1).toUpperCase(),
+                    backgroundImage: NetworkImage(
+                      tempUser.photoURL,
                     ),
                   ),
                   SizedBox(width: 10),

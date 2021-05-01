@@ -26,7 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
               return SearchTile(
                 id: snapshot.docs[index].id,
                 email: snapshot.docs[index].data()['email'],
-                name: "${snapshot.docs[index].data()['first_name']} ${snapshot.docs[index].data()['last_name']}",
+                name: "${snapshot.docs[index].data()['name']}",
               );
             },
           )
@@ -98,22 +98,22 @@ class SearchTile extends StatelessWidget {
   DatabaseMethods databaseMethods = DatabaseMethods();
 
   // Create chat room
-  createChatroom(BuildContext context, String userId) {
-    String chatId = getChatRoomId(userId, currentUser.uid);
+  createChatroom(BuildContext context, String userId) async {
+    // QuerySnapshot temp = await databaseMethods.getChatRoomsId(userInfo.email);
     List<String> users = [
       userId,
       currentUser.uid
     ];
     Map<String, dynamic> chatRoomMap = {
       "users": users,
-      "chatroomId": chatId,
     };
 
-    databaseMethods.createChatRoom(chatId, chatRoomMap);
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => ConversationScreen(
-              chatId: chatId,
-            )));
+    var id = databaseMethods.createChatRoom(chatRoomMap);
+    print(id);
+    // Navigator.of(context).push(MaterialPageRoute(
+    //     builder: (_) => ConversationScreen(
+    //           chatId: chatId,
+    //         )));
   }
 
   @override

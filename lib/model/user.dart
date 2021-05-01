@@ -1,5 +1,5 @@
 class Users {
-  final String name, email;
+  final String name, email, photoURL;
 
-  Users({this.name, this.email});
+  Users({this.name, this.email, this.photoURL});
 }
