@@ -51,7 +51,6 @@ class _SignInState extends State<SignIn> {
         }
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
       }
-      print("${userCredential.user.uid} | ${userCredential.user.email}");
       setState(() {
         isLoading = false;
       });
